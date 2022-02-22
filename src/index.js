@@ -6,11 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
-import tasks from './reducers';
+import tasksReducer from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
+const rootReducer = (state = {}, action) => {
+  return {
+    tasks: tasksReducer(state.tasks, action),
+  };
+};
+
 const store = createStore(
-  tasks,
+  rootReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
 
@@ -18,7 +24,7 @@ ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
       <App />
-        </React.StrictMode>
+    </React.StrictMode>
   </Provider>,
   document.getElementById('root')
 );

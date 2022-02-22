@@ -26,12 +26,35 @@ export function fetchTasksSucceeded(tasks) {
   }
 }
 
+function fetchTasksStarted() {
+  return {
+    type: 'FETCH_TASKS_STARTED',
+  };
+}
+
+function fetchTasksFailed(error) {
+  return {
+    type: 'FETCH_TASKS_FAILED',
+    payload: {
+      error,
+    },
+  };
+}
+
 export function fetchTasks() {
   return dispatch => {
-    api.fetchTasks().then(resp => {
-      dispatch(fetchTasksSucceeded(resp.data));
-    });
-  };
+    dispatch(fetchTasksStarted());
+
+      api.fetchTasks()
+      .then(resp => {
+        setTimeout(() => {
+          dispatch(fetchTasksSucceeded(resp.data));
+        }, 2000);
+      })
+      .catch(err => {
+        dispatch(fetchTasksFailed(err.message));
+      });
+    };
 }
 
 function editTaskSucceeded(task) {
@@ -45,7 +68,7 @@ function editTaskSucceeded(task) {
 
 export function editTask(id, params = {}) {
   return (dispatch, getState) => {
-    const task = getTaskById(getState().tasks, id);
+    const task = getTaskById(getState().tasks.tasks, id);
     const updatedTask = Object.assign({}, task, params);
 
     api.editTask(id, updatedTask).then(resp => {

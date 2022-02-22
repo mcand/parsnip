@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TasksPage from './components/TasksPage.js';
-import { createTask, editTask, fetchTasks } from './actions';
+import { createTask, editTask, fetchTasks, fetchTasksStarted } from './actions';
 import FlashMessage from './components/FlashMessage';
 
 class App extends Component {
@@ -14,7 +14,8 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(fetchTasks());
+//this.props.dispatch(fetchTasks());
+    this.props.dispatch(fetchTasksStarted());
   }
 
   render() {

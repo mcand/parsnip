@@ -19,14 +19,14 @@ export function createTask({ title, description, status = 'Unstarted' }) {
 
 export function fetchTasksSucceeded(tasks) {
   return {
-    type: 'FETCH_TASKS_SUCCEDED',
+    type: 'FETCH_TASKS_SUCCEEDED',
     payload: {
       tasks
     }
   }
 }
 
-function fetchTasksStarted() {
+export function fetchTasksStarted() {
   return {
     type: 'FETCH_TASKS_STARTED',
   };
@@ -41,6 +41,7 @@ function fetchTasksFailed(error) {
   };
 }
 
+/*
 export function fetchTasks() {
   return dispatch => {
     dispatch(fetchTasksStarted());
@@ -56,6 +57,7 @@ export function fetchTasks() {
       });
     };
 }
+*/
 
 function editTaskSucceeded(task) {
   return {

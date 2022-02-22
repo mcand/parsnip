@@ -12,7 +12,7 @@ export default function tasks(state = initialState, action) {
         isLoading: true,
       }
     }
-    case 'FETCH_TASKS_SUCCEDED': {
+    case 'FETCH_TASKS_SUCCEEDED': {
       return {
         ...state,
         isLoading: false,

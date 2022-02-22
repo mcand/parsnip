@@ -40,7 +40,8 @@ hr {
   border: 1px solid transparent;
   borderRadius: 6px;
   font: inherit;
-  cursor: pointer
+  cursor: pointer;
+  margin: 20px;
 }
 
 .button-default {
@@ -57,7 +58,8 @@ hr {
 }
 
 /* TaskList */
-.new-task-form {
+.task-list-form {
+  margin-left: 20px;
   margin-bottom: 10px;
 }
 
@@ -93,16 +95,18 @@ hr {
   min-height: 60px;
 }
 
-.task-lists {
+.tasks-lists {
   display: flex;
   justify-content: space-between;
+  padding: 20px;
 }
 
 .task-list {
   width: 300px;
+  margin-right: 50px;
 }
 
-.task-list-title {
+.task-list .title {
   margin-bottom: 10px;
 }
 
@@ -111,6 +115,13 @@ hr {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+.task-timer {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+  padding: 10px 20px;
 }
 
 .flash-error {

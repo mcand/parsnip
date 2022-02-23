@@ -110,6 +110,10 @@ hr {
   margin-bottom: 10px;
 }
 
+.task-list-header input {
+  margin: 0 20px;
+}
+
 .tasks-loading {
   display: flex;
   justify-content: center;

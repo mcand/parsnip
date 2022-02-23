@@ -42,16 +42,25 @@ class TasksPage extends Component {
     this.setState({ showNewCardForm: !this.state.showNewCardForm });
   }
 
+  onSearch = e => {
+    this.props.onSearch(e.target.value);
+  }
+
   renderTaskLists() {
-    const { tasks } = this.props;
+    const { onStatusChange, tasks } = this.props;
+
+    const filteredTasks = tasks.filter(task => {
+      return task.title.match(new RegExp(this.state.searchTerm, 'i'));
+    });
+
     return TASK_STATUSES.map(status => {
-      const statusTasks = tasks.filter(task => task.status === status);
+      const statusTasks = filteredTasks.filter(task => task.status === status);
       return (
         <TaskList
           key={status}
           status={status}
           tasks={statusTasks}
-          onStatusChange={this.props.onStatusChange}
+          onStatusChange={this.onStatusChange}
         />
       );
     });
@@ -67,7 +76,12 @@ class TasksPage extends Component {
     }
     return (
         <div className="task-list">
-        <div className="task-list-header">
+          <div className="task-list-header">
+          <input
+            onChange={this.onSearch}
+            type="text"
+            placeholder="Search..."
+          />
           <button
             className="button button-default"
             onClick={this.toggleForm}

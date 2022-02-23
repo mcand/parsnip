@@ -99,3 +99,7 @@ function getTaskById(tasks, id) {
   return tasks.find(task => task.id === id);
 }
 
+export function filterTasks(searchTerm) {
+  return { type: 'FILTER_TASKS', payload: { searchTerm } }; 
+}
+

@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TasksPage from './components/TasksPage.js';
-import { createTask, editTask, fetchTasks, fetchTasksStarted } from './actions';
+import { createTask, editTask, fetchTasks, filterTasks, fetchTasksStarted } from './actions';
 import FlashMessage from './components/FlashMessage';
 
 class App extends Component {
   onCreateTask = ({ title, description }) => {
     this.props.dispatch(createTask({ title, description }));
+  };
+
+  onSearch = searchTerm => {
+    this.props.dispatch(filterTasks(searchTerm));
   };
 
   onStatusChange = (id, status) => {
@@ -27,6 +31,7 @@ class App extends Component {
           <TasksPage
             tasks={this.props.tasks}
             onCreateTask={this.onCreateTask}
+            onSearch={this.onSearch}
             onStatusChange={this.onStatusChange}
             isLoding={this.props.isLoading}
           />
@@ -37,8 +42,13 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-  const { tasks, isLoading, error } = state.tasks;
-  return { tasks, isLoading, error };
+  const { isLoading, error, searchTerm } = state.tasks;
+
+  const tasks = state.tasks.tasks.filter(task => {
+    return task.title.match(new RegExp(searchTerm, 'i'));
+  });
+
+  return { tasks, isLoading, error};
 }
 
 export default connect(mapStateToProps)(App);

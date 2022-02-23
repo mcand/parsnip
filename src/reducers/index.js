@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { TASK_STATUSES } from '../constants';
 
 const initialState = {
   tasks: [],
@@ -75,4 +76,18 @@ export const getFilteredTasks = createSelector(
     return tasks.filter(task => task.title.match(new RegExp(searchTerm, 'i')));
   },
 );
+
+export const getGroupedAndFilteredTasks = createSelector(
+  [getFilteredTasks],
+  tasks => {
+    const grouped = {};
+
+    TASK_STATUSES.forEach(status => {
+      grouped[status] = tasks.filter(task => task.status === status);
+    });
+
+    return grouped;
+  },
+);
+
 

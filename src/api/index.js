@@ -9,15 +9,18 @@ const client = axios.create({
   },
 });
 
+export function fetchProjects() {
+  return client.get('/projects?_embed=tasks');
+}
+
 export function fetchTasks() {
   return client.get('/tasks');
 }
 
 export function createTask(params) {
-  return client.post('/tasks', params)
+  return client.post('/tasks', { ...params, timer: 0 });
 }
 
 export function editTask(id, params) {
-  return axios.put(`${API_BASE_URL}/tasks/${id}`, params);
+  return client.put(`/tasks/${id}`, params);
 }
-

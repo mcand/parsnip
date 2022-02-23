@@ -1,6 +1,85 @@
 import * as api from '../api';
+import { normalize, schema } from 'normalizr';
 
-function createTaskSucceded(task) {
+export const SET_CURRENT_PROJECT_ID = 'SET_CURRENT_PROJECT_ID';
+export function setCurrentProjectId(id) {
+  return {
+    type: 'SET_CURRENT_PROJECT_ID',
+    payload: {
+      id,
+    },
+  };
+}
+
+export const FETCH_PROJECTS_STARTED = 'FETCH_PROJECTS_STARTED';
+function fetchProjectsStarted(boards) {
+  return { type: FETCH_PROJECTS_STARTED, payload: { boards } };
+}
+
+export const FETCH_PROJECTS_FAILED = 'FETCH_PROJECTS_FAILED';
+function fetchProjectsFailed(err) {
+  return { type: FETCH_PROJECTS_FAILED, payload: err };
+}
+
+const taskSchema = new schema.Entity('tasks');
+const projectSchema = new schema.Entity('projects', {
+  tasks: [taskSchema],
+});
+
+function receiveEntities(entities) {
+  return {
+    type: 'RECEIVE_ENTITIES',
+    payload: entities,
+  };
+}
+
+export function fetchProjects() {
+  return (dispatch, getState) => {
+    dispatch(fetchProjectsStarted());
+
+    return api
+      .fetchProjects()
+      .then(resp => {
+        const projects = resp.data;
+
+        const normalizedData = normalize(projects, [projectSchema]);
+
+        dispatch(receiveEntities(normalizedData));
+
+        // Pick a board to show on initial page load
+        if (!getState().page.currentProjectId) {
+          const defaultProjectId = projects[0].id;
+          dispatch(setCurrentProjectId(defaultProjectId));
+        }
+      })
+      .catch(err => {
+        fetchProjectsFailed(err);
+      });
+  };
+}
+
+// TODO: do these get migrated over to fetchBoard
+export function fetchTasksStarted() {
+  return {
+    type: 'FETCH_TASKS_STARTED',
+  };
+}
+
+export function fetchTasksSucceeded() {
+  return {
+    type: 'FETCH_TASKS_SUCCEEDED',
+  };
+}
+
+export function fetchTasks(boardId) {
+  return dispatch => {
+    return api.fetchTasks(boardId).then(resp => {
+      dispatch(fetchTasksSucceeded(resp.data));
+    });
+  };
+}
+
+function createTaskSucceeded(task) {
   return {
     type: 'CREATE_TASK_SUCCEEDED',
     payload: {
@@ -9,55 +88,18 @@ function createTaskSucceded(task) {
   };
 }
 
-export function createTask({ title, description, status = 'Unstarted' }) {
-  return dispatch => {
-    api.createTask({ title, description, status }).then(resp => {
-      dispatch(createTaskSucceded(resp.data));
+export function createTask({
+  projectId,
+  title,
+  description,
+  status = 'Unstarted',
+}) {
+  return (dispatch, getState) => {
+    api.createTask({ title, description, status, projectId }).then(resp => {
+      dispatch(createTaskSucceeded(resp.data));
     });
   };
 }
-
-export function fetchTasksSucceeded(tasks) {
-  return {
-    type: 'FETCH_TASKS_SUCCEEDED',
-    payload: {
-      tasks
-    }
-  }
-}
-
-export function fetchTasksStarted() {
-  return {
-    type: 'FETCH_TASKS_STARTED',
-  };
-}
-
-function fetchTasksFailed(error) {
-  return {
-    type: 'FETCH_TASKS_FAILED',
-    payload: {
-      error,
-    },
-  };
-}
-
-/*
-export function fetchTasks() {
-  return dispatch => {
-    dispatch(fetchTasksStarted());
-
-      api.fetchTasks()
-      .then(resp => {
-        setTimeout(() => {
-          dispatch(fetchTasksSucceeded(resp.data));
-        }, 2000);
-      })
-      .catch(err => {
-        dispatch(fetchTasksFailed(err.message));
-      });
-    };
-}
-*/
 
 function editTaskSucceeded(task) {
   return {
@@ -68,22 +110,21 @@ function editTaskSucceeded(task) {
   };
 }
 
-function progressTimerStart(taskId) {
-  return { type: 'TIMER_STARTED', payload: { taskId } };
-}
-
-export function editTask(id, params = {}) {
+export function editTask(task, params = {}) {
   return (dispatch, getState) => {
-    const task = getTaskById(getState().tasks.tasks, id);
     const updatedTask = {
       ...task,
       ...params,
     };
-    api.editTask(id, updatedTask).then(resp => {
+    api.editTask(task.id, updatedTask).then(resp => {
       dispatch(editTaskSucceeded(resp.data));
+
+      // if task moves into "In Progress", start timer
       if (resp.data.status === 'In Progress') {
         return dispatch(progressTimerStart(resp.data.id));
       }
+
+      // if tasks move out of "In Progress", stop timer
       if (task.status === 'In Progress') {
         return dispatch(progressTimerStop(resp.data.id));
       }
@@ -91,15 +132,14 @@ export function editTask(id, params = {}) {
   };
 }
 
+function progressTimerStart(taskId) {
+  return { type: 'TIMER_STARTED', payload: { taskId } };
+}
+
 function progressTimerStop(taskId) {
   return { type: 'TIMER_STOPPED', payload: { taskId } };
 }
 
-function getTaskById(tasks, id) {
-  return tasks.find(task => task.id === id);
-}
-
 export function filterTasks(searchTerm) {
-  return { type: 'FILTER_TASKS', payload: { searchTerm } }; 
+  return { type: 'FILTER_TASKS', payload: { searchTerm } };
 }
-

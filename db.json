@@ -1,39 +1,38 @@
 {
+  "projects": [
+    {
+      "id": 1,
+      "name": "Short-Term Goals"
+    },
+    {
+      "id": 2,
+      "name": "Long-Term Goals"
+    }
+  ],
   "tasks": [
     {
       "id": 1,
       "title": "Learn Redux",
       "description": "The store, actions, and reducers, oh my!",
-      "status": "Completed",
-      "timer": 17
+      "status": "In Progress",
+      "timer": 86,
+      "projectId": 1
     },
     {
       "id": 2,
       "title": "Peace on Earth",
       "description": "No big deal.",
-      "status": "Completed",
-      "timer": 20
+      "status": "In Progress",
+      "timer": 132,
+      "projectId": 2
     },
     {
       "id": 3,
       "title": "Create Facebook for dogs",
       "description": "The hottest new social network",
       "status": "Completed",
-      "timer": 0
-    },
-    {
-      "title": "colocar comida para aisha",
-      "description": "aisha comida",
-      "status": "Completed",
-      "id": 4,
-      "timer": 20
-    },
-    {
-      "title": "wefe",
-      "description": "ewfewf",
-      "status": "In Progress",
-      "id": 5,
-      "timer": 10
+      "timer": 332,
+      "projectId": 1
     }
   ]
 }

@@ -154,6 +154,21 @@ export const getGroupedAndFilteredTasks = createSelector(
   }
 );
 
+export const getGroupedAndFilteredTasksIds = createSelector(
+  [getFilteredTasks],
+  tasks => {
+    const grouped = {};
+
+    TASK_STATUSES.forEach(status => {
+      grouped[status] = tasks
+        .filter(task => task.status === status)
+        .map(task => task.id);
+    });
+
+    return grouped;
+  }
+);
+
 export const getProjects = createSelector(
     [state => state.projects],
     projects => {

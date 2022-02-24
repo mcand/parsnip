@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators  } from 'redux';
 import TaskList from './TaskList.js';
 import { createTask, editTask, filterTasks } from '../actions';
-import { getGroupedAndFilteredTasks } from '../reducers';
+import { getGroupedAndFilteredTasksIds } from '../reducers';
 
 class TasksPage extends Component {
   constructor(props) {
@@ -54,15 +54,15 @@ class TasksPage extends Component {
   }
 
   renderTaskLists() {
-    const { onStatusChange, tasks } = this.props;
+    const { taskIds } = this.props;
 
-    return Object.keys(tasks).map(status => {
-      const taskByStatus = tasks[status];
+    return Object.keys(taskIds).map(status => {
+      const idsByStatus = taskIds[status];
       return (
         <TaskList
           key={status}
           status={status}
-          tasks={taskByStatus}
+          taskIds={idsByStatus}
           onStatusChange={this.onStatusChange}
         />
       );
@@ -130,7 +130,7 @@ function mapStateToProps(state) {
   const { isLoading } = state.projects;
 
   return {
-    tasks: getGroupedAndFilteredTasks(state),
+    taskIds: getGroupedAndFilteredTasksIds(state),
     currentProjectId: state.page.currentProjectId,
     isLoading,
   };

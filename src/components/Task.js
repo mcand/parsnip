@@ -1,10 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-const TASK_STATUSES = [
-  'Unstarted',
-  'In Progress',
-  'Completed'
-]
+import { TASK_STATUSES  } from '../constants';
 
 const Task = props => {
   return (
@@ -26,7 +23,12 @@ const Task = props => {
   function onStatusChange(e) {
     props.onStatusChange(props.task, e.target.value);
   }
+};
+
+function mapStateToProps(state, ownProps) {
+  return {
+    task: state.tasks.items[ownProps.taskId]
+  };
 }
 
-export default Task;
-
+export default connect(mapStateToProps)(Task);

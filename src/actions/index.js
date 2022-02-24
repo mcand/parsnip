@@ -1,5 +1,6 @@
 import * as api from '../api';
 import { normalize, schema } from 'normalizr';
+import { batchActions } from 'redux-batched-actions';
 
 export const SET_CURRENT_PROJECT_ID = 'SET_CURRENT_PROJECT_ID';
 export function setCurrentProjectId(id) {
@@ -44,7 +45,11 @@ export function fetchProjects() {
 
         const normalizedData = normalize(projects, [projectSchema]);
 
-        dispatch(receiveEntities(normalizedData));
+        dispatch(batchActions([
+            receiveEntities(normalizedData),
+            setCurrentProjectId(projects[0].id),
+          ]),
+        );
 
         // Pick a board to show on initial page load
         if (!getState().page.currentProjectId) {

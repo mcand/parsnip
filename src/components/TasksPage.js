@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators  } from 'redux';
 import TaskList from './TaskList.js';
+import { createTask, editTask, filterTasks } from '../actions';
+import { getGroupedAndFilteredTasks } from '../reducers';
 
 class TasksPage extends Component {
   constructor(props) {
@@ -32,9 +36,14 @@ class TasksPage extends Component {
     this.props.onCreateTask({
       title: this.state.title,
       description: this.state.description,
+      projectId: this.props.currentProjectId
     });
     this.resetForm();
   }
+
+  onStatusChange = (task, status) => {
+    this.props.editTask(task, { status });
+  };
 
   toggleForm = () => {
     this.setState({ showNewCardForm: !this.state.showNewCardForm });
@@ -54,13 +63,14 @@ class TasksPage extends Component {
           key={status}
           status={status}
           tasks={taskByStatus}
-          onStatusChange={onStatusChange}
+          onStatusChange={this.onStatusChange}
         />
       );
     });
   }
 
   render() {
+    console.log('rendering TaskPage')
     if  (this.props.isLoading) {
       return (
         <div className="tasks-loading">
@@ -116,5 +126,25 @@ class TasksPage extends Component {
   }
 }
 
-export default TasksPage;
+function mapStateToProps(state) {
+  const { isLoading } = state.projects;
 
+  return {
+    tasks: getGroupedAndFilteredTasks(state),
+    currentProjectId: state.page.currentProjectId,
+    isLoading,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      onSearch: filterTasks,
+      createTask,
+      editTask,
+    },
+    dispatch,
+  );
+}
+ 
+export default connect(mapStateToProps, mapDispatchToProps)(TasksPage);

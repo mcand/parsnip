@@ -154,11 +154,14 @@ export const getGroupedAndFilteredTasks = createSelector(
   }
 );
 
-export const getProjects = state => {
-  return Object.keys(state.projects.items).map(id => {
-    return state.projects.items[id];
-  });
-};
+export const getProjects = createSelector(
+    [state => state.projects],
+    projects => {
+        return Object.keys(projects.items).map(id => {
+          return projects.items[id];
+      });
+    },
+);
 
 const initialPageState = {
   currentProjectId: null,

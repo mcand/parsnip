@@ -10,6 +10,7 @@ import { projects, tasks, page } from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas';
+import { enableBatching } from 'redux-batched-actions';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -22,7 +23,7 @@ const rootReducer = (state = {}, action) => {
 };
 
 const store = createStore(
-  rootReducer,
+  enableBatching(rootReducer),
   composeWithDevTools(applyMiddleware(thunk, sagaMiddleware))
 );
 

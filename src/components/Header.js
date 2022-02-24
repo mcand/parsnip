@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { setCurrentProjectId } from '../actions';
+import { getProjects } from '../reducers'; 
 
 class Header extends Component {
+  onCurrentProjectChange = e => {
+    this.props.setCurrentProjectId(e.target.value);
+  }
+
   render() {
+    console.log('rendering Header')
     const projectOptions = this.props.projects.map(project =>
       <option key={project.id} value={project.id}>
         {project.name}
@@ -12,7 +20,7 @@ class Header extends Component {
       <div className="project-item">
         Project:
         <select
-          onChange={this.props.onCurrentProjectChange}
+          onChange={this.onCurrentProjectChange}
           className="project-menu"
         >
           {projectOptions}
@@ -22,4 +30,10 @@ class Header extends Component {
   }
 }
 
-export default Header;
+function mapStateToProps(state) {
+  return {
+    projects: getProjects(state),
+  };
+}
+
+export default connect(mapStateToProps, { setCurrentProjectId })(Header);

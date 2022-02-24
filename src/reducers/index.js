@@ -21,6 +21,7 @@ export function tasks(state = initialTasksState, action) {
 
       return state;
     }
+    case 'CREATE_TASK_SUCCEEDED':
     case 'EDIT_TASK_SUCCEEDED': {
       const { task } = action.payload;
 
@@ -35,19 +36,28 @@ export function tasks(state = initialTasksState, action) {
       };
     }
     case 'TIMER_INCREMENT': {
-      const nextTasks = Object.keys(state.items).map(taskId => {
-        const task = state.items[taskId];
+      const task = state.items[action.payload.taskId]
+      if (task) {
+        task.timer += 1;
+      }
 
-        if (task.id === action.payload.taskId) {
-          return { ...task, timer: task.timer + 1 };
-        }
-
-        return task;
-      });
       return {
         ...state,
-        tasks: nextTasks,
-      };
+        tasks: task
+      }
+      // const nextTasks = Object.keys(state.items).map(taskId => {
+      //   const task = state.items[taskId];
+
+      //   if (task.id === action.payload.taskId) {
+      //     return { ...task, timer: task.timer + 1 };
+      //   }
+
+      //   return task;
+      // });
+      // return {
+      //   ...state,
+      //   tasks: nextTasks,
+      // };
     }
     default: {
       return state;
@@ -127,7 +137,7 @@ const getTasksByProjectId = state => {
 export const getFilteredTasks = createSelector(
   [getTasksByProjectId, getSearchTerm],
   (tasks, searchTerm) => {
-    return tasks.filter(task => task.title.match(new RegExp(searchTerm, 'i')));
+    return tasks.filter(task => task?.title.match(new RegExp(searchTerm, 'i')));
   }
 );
 

@@ -118,7 +118,7 @@ export function editTask(task, params = {}) {
     };
     api.editTask(task.id, updatedTask).then(resp => {
       dispatch(editTaskSucceeded(resp.data));
-
+      debugger
       // if task moves into "In Progress", start timer
       if (resp.data.status === 'In Progress') {
         return dispatch(progressTimerStart(resp.data.id));

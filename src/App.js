@@ -32,7 +32,6 @@ class App extends Component {
   };
 
   onStatusChange = (task, status) => {
-    debugger
     this.props.dispatch(editTask(task, { status }));
   };
 
